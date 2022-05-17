@@ -1,0 +1,9 @@
+venv*
+GoldenShoeCompany/static/*
+*.sqlite3
+__pycache__/
+*.py[cod]
+
+# Django stuff:
+*.log
+*.pot
