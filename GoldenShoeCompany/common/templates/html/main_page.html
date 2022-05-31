@@ -1,4 +1,36 @@
 {% extends 'html/base_page.html' %}
+{% load static %}
+
 {% block main %}
+<div class = " ">
+    <div class = "bg-white container d-block" >
+        
+        <div class ="row justify-content-center " style="height:300px;">
+            
+            <div class = "bg-white col-auto align-self-center">  
+                <p class = "fs-1">Join the Golden Shoe Club! Become a member and <b>get £10 vouchers every week!</b> All you need to do is <a href="{% url 'sign_up' %}"><b class = "text-primary">sign up</b></a></p>
+            </div>
+            
+            
+        </div>
+    </div>
+    <div class = "parallax" style = "background-image:url('{% static 'common/png/splashmain.png' %}')" ></div>
+
+    <div class = "bg-white container d-block" >
+        
+        <div class ="row justify-content-center " style="height:300px;">
+            
+            <div class = "bg-white col-auto align-self-center">  
+                <p class = "fs-1">Summer is here. Are you ready?</p>
+            </div>
+            
+            
+        </div>
+        {% include 'html/three_item_carousel.html' with items=sport_items  %}
+    </div>
+    
+    <div class = "parallax" style = "  min-height: 500px; background-image:url('{% static 'common/png/funprof.jpg' %}')" ></div>
+    {% include 'html/footer.html' %}
+</div>         
 
 {% endblock %}

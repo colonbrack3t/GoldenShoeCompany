@@ -37,10 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'multiselectfield',
+      'colorfield',
     'common',
     'users',
     'products',
-    'multiselectfield',
+     'crispy_forms',
+     'compressor'
+  
 ]
 
 MIDDLEWARE = [
@@ -55,6 +59,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'GoldenShoeCompany.urls'
 
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -79,8 +85,12 @@ WSGI_APPLICATION = 'GoldenShoeCompany.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'goldenshoecompanydb', 
+        'USER': 'postgres', 
+        'PASSWORD': 'password',
+        'HOST': '127.0.0.1', 
+        'PORT': '5432',
     }
 }
 
@@ -121,5 +131,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+AUTH_USER_MODEL = 'users.User'
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+
+COMPRESS_OFFLINE = True
+LIBSASS_OUTPUT_STYLE = 'compressed'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
+SHOE_CATEGORIES = (
+        (1 , "Casual"),
+        (2 , "Sport") 
+        )

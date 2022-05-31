@@ -1,0 +1,56 @@
+{% extends 'html/base_page.html' %}
+{% block main %}
+
+<div class = "container">
+    <div class = "container">
+        <div class ="row">
+    {% for item in basket %}
+    <div class = "col-auto row shadow border rounded p-2 m-2">
+        <div class = "col-1">
+            <img width="100%" src = "{{item.image.image.url }}">
+    
+        </div>
+        <div class="col-10 row"> 
+            <div class = "col-2"> <b >{{item.item}}</b></div>
+            <div class = "col-1" > <input type="radio" onclick="this.checked = false;" style = "--radio_back_color:{{item.item.color.hex_color}}" name = "ColorAndSize" ></div>
+            <div class = "col-1">Size : {{item.item.size}}
+        
+        </div>
+            <div class = "col-3">Quantity : {{item.quantity}} 
+    
+            </div>
+    
+            
+        </div>
+    </div>
+    {% endfor %}
+        <form class = "input-group row " method ="post">
+         {% csrf_token %}
+        Delivery Options
+        <div><label class = "col-12" ><input  type = "radio" checked name="delivery" value = "0" style = "--radio_back_color:#FF1D26"> Free devilery (3 - 5 working days) </label></div>
+        <label class = "col-12" ><input   type = "radio" name="delivery" value = "1" style = "--radio_back_color:#FF1D26"> £5 - Next Day Delivery</label>
+  
+        <input type= "text" placeholder="Voucher Code" name="voucher" class = "col-auto ">
+
+        <div class = "col-12"  name = "0"> Total : £{{ total }}</div>
+        <div class = "col-12"  name = "1" hidden> Total : £{{ total_with_next_day }}</div>
+        <input  type = "submit" class = "col-2 btn btn-primary" value = "Pay">
+
+    </form>
+<script>
+
+    $('input[name="delivery"]').click(function (e){
+        console.log($('div[name="1"]'))
+        if ($(this).val() == '1'){
+            $('div[name="1"]').attr("hidden",false)
+            $('div[name="0"]').attr("hidden",true)
+        }
+        if ($(this).val() == '0'){
+            $('div[name="0"]').attr("hidden",false)
+            $('div[name="1"]').attr("hidden",true)
+                }
+    }
+    )
+</script>
+</div>
+{% endblock %}

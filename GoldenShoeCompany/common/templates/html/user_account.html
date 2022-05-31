@@ -1,0 +1,133 @@
+{% extends 'html/base_page.html' %}
+{% block main %}
+<div class = "container">
+    
+    
+    
+
+    <ul class="nav nav-tabs mt-4">
+        <li class="nav-item">
+          <a data-bs-toggle="collapse"  value="account_details" role="button"    class="text-primary nav-link active" aria-current="page">Account Details</a>
+        </li>
+        <li class="nav-item">
+            <a data-bs-toggle="collapse" value="order_history" role="button"  class="text-primary nav-link active" aria-current="page">Order History</a>
+          </li>
+          {% if user.is_staff%}
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" value="developer_mode" role="button"  class="text-primary nav-link active" aria-current="page">Developer</a>
+          </li>
+          {%endif %}
+      </ul>
+      <div class="collapse" id="account_details">
+        <div class="card card-body">
+            <h5 class="card-title">Account Details</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Username : {{user.username}}</li>
+                <li class="list-group-item">Email : {{user.email}}</li>
+                <li class="list-group-item"><b class = "text-primary" >Change password</b></li>
+                <li class="list-group-item"><a href = "{% url 'log_out' %}"><b class = "text-primary" >Log out</b></a></li>
+              </ul>
+        </div>
+      </div>
+      <div class="collapse show" id="order_history">
+          
+        <div class="card card-body">
+            <h5 class="card-title">Order History</h5>
+            
+            <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Date Ordered</th>
+                    <th scope="col">Order Number</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Color</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Expected delivery date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                  {% for order in orders %}
+            
+            <tr>
+                <th scope="row">{{order.date_placed}}</th>
+                <td><small>{{order.order_number}}</small></td>
+                <td><a class = "text-primary" href='{% url "single_product_page" id=order.item.product.pk %}'>
+                  <img width = "10%" height = "10%" src="{{order.image.image.url}}" >
+                  <b>{{order.item}}</b></a>
+                  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#o{{order.pk}}" aria-expanded="false" aria-controls="o{{order.pk}}">
+                    Return
+                  </button>
+                </td>
+                  <td><input type="radio" onclick="this.checked = false;"style = "--radio_back_color:{{order.item.color.hex_color}}" > 
+                  </td>
+                <td>{{order.quantity}}</td>
+                <td>£{{order.total_price}}</td>
+                <td>{{order.status}}</td>
+                <td>{{order.date_due}}</td>
+                
+              </tr>
+              <tr>
+                <td colspan="8" class="collapse" id="o{{order.pk}}">
+                 
+                    <div class="">
+                      <form method="get" class = " m-4 p-4  ">
+                        <div class = "form-check row" ><b>Return reason</b>
+                        <label class = "col-12">
+                          <input value="{{category}}" name="category" class = "form-check-input" type = 'checkbox'>Incorrect size</label>
+                          <label class = "col-12"><input value="{{category}}" name="category" class = "form-check-input" type = 'checkbox'>Didn't like it / not what I expected</label>
+                          <label class = "col-12"><input value="{{category}}" name="category" class = "form-check-input" type = 'checkbox'>Damaged</label>
+                          <label class = "col-12"><input value="{{category}}" name="category" class = "form-check-input" type = 'checkbox'>Other</label>
+                          
+                          <input type = "submit" value = "Submit" class = "col-auto btn btn-primary">
+                        
+                      </div>
+                    </div>
+                  
+                </td>
+              </tr>
+            {% endfor %}
+                </tbody>
+              </table>
+            
+           
+        </div>
+      </div>
+      {% if user.is_staff%}
+      <div class="collapse" id="developer_mode">
+        <div class="card card-body">
+            <h5 class="card-title">Developer</h5>
+            <a><b class = "text-primary" >Get API key</b></a>
+            <a href = "{% url 'admin:index' %}"><b class = "text-primary" >Admin Page</b></a>
+        </div>
+      </div>
+      {%endif %}
+      <script>
+        function submit(form){
+          $('form.'+form.innerHTML).submit()
+        }
+        
+          jQuery('a.nav-link').click( function(e) {
+           
+            id = $(this).attr('value')
+
+            document.querySelectorAll(".collapse").forEach(
+                div => {
+                    div_id = div.id
+
+                    if(div_id  != id){
+                        jQuery("#"+div_id).collapse('hide')
+                    }else{
+                        jQuery("#"+div_id).collapse('show');
+                    }
+                }
+            )
+            
+            
+            
+            });
+      </script>
+</div>
+{% endblock%}

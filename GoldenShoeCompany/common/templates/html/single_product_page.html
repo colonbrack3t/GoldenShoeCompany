@@ -1,0 +1,108 @@
+{% extends 'html/base_page.html' %}
+{% block main%}
+<div class = "container d-flex">
+  <div class = "row ">
+    <div class = "p-4 mt-4  col-12 col-md-6">
+    <div id="carouselExampleIndicators"  class="carousel carousel-dark  slide align-self-start" data-bs-ride="true">
+        <div class="carousel-indicators">
+            {% for image in images %}
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{forloop.counter0}}" {% if forloop.counter0 == 0 %}class="active" aria-current="true"{% endif %} aria-label="Slide 1"></button>
+
+          
+            {% endfor %}
+        </div>
+        <div class="carousel-inner rounded border "   >
+         {% for image in images %}
+            <div   class=" carousel-item {% if forloop.counter0 == 0 %} active {% endif %}">
+            <img width = "100%" height = "100%" src="{{image.image.url}}" >
+          </div>
+         {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+       
+      </div>
+      <div class = "col-sm-12">
+        <h1 class = "fs-1 text-center">{{item.name}}</h1>
+        <p class = "fs-4 text-muted">{{item.description}}</p>
+    
+        </div>
+      </div>
+      <div class = "row col-12 col-md-6 p-4 mt-4 align-self-center">
+        
+        
+
+        <form class = "col-sm-12 align-self-start accordion product_form" >  
+          {% csrf_token %}
+           <h1> Select Size</h1>
+            <div class="accordion mb-2" id="accordionExample">
+              {% for size , items in stocks.items %}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{forloop.counter}}">
+                  <button class="accordion-button {% if forloop.counter0 != 0 %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" aria-expanded=
+                  {% if forloop.counter0 == 0 %}"true" {% else %} "false"{% endif %} 
+                  data-bs-target="#collapse{{forloop.counter}}" aria-controls="collapse{{forloop.counter}}">
+                    {{size}}
+                  </button>
+                </h2>
+                <div id="collapse{{forloop.counter}}" class="accordion-collapse collapse
+                {% if forloop.counter0 == 0 %}show{% endif %}" aria-labelledby="heading{{forloop.counter}}" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    {% for color , stock in items %}
+                      <label class = "btn"><input type="radio" value= "{{color.color_name}}:{{size}}"style = "--radio_back_color:{{color.hex_color}}" name = "ColorAndSize" > {{color}}
+                        {% if stock < 20 %}<p class=" text-danger">Only {{stock}} left in stock!</p>
+                        {% endif %} 
+                      </label>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              {% endfor %} 
+            </div>
+          <input type = "submit"  class= "btn btn-primary" value = "Add to basket">
+
+        </form>
+      </div></div>
+      <script>
+        $('.product_form').on('submit', function () {
+         
+          $.ajax({
+    type : 'POST',
+    dataType : 'json',
+    url : "{% url 'single_product_page' id=item.id %}",
+    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+    data: {
+        'product':"{{item.id}}",
+        'ColorAndSize' : $('input[name=ColorAndSize]:checked').val(),
+    },
+    success : function(result){
+      toast = document.getElementById('liveToast')
+      new bootstrap.Toast(toast).show()
+      if(result['new_item']) {
+        counter = document.getElementById('basket_count')
+        counter.innerHTML++
+        counter.removeAttribute("hidden")
+      }
+    }})
+    return false;
+    });
+      </script>
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast " role="alert" aria-live="assertive" aria-atomic="true">
+          
+          <div class="d-flex">
+            <div class="toast-body">
+            Added to basket!
+           </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+</div>
+{% endblock %}

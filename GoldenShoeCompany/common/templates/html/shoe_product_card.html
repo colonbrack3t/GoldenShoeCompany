@@ -1,0 +1,23 @@
+<a href = '{% url "single_product_page" id=item.id %}'class="shadow text-black text-decoration-none product col-lg-2 m-lg-2 m-1 col-md-3 col-10 row g-0 border rounded overflow-hidden flex-md-row  shadow-sm h-md-250 position-relative">
+
+  <div class="col-12 d-block">
+    <img height = 'auto' width = '100%' src ="{{image_model.image.url}}"></img>  
+    </div>
+    <div class="col p-4 d-flex flex-column position-static">
+      <h3 class="mb-0"><b class = "text-primary" name="product_name">{{item.name}}</b></h3>
+      <p class="d-none d-md-block card-text mb-auto">{{item.short_description}}</p>
+      <div class = "row">
+
+        <p class="col-12 card-text mb-auto">£{{item.price}}</p>
+        {% if item.get_stock < 20 %}
+        <p class="col-12 card-text mb-auto text-danger">Only {{item.get_stock}} left in stock!</p>
+        {% else %}
+        <p class="col-12 card-text mb-auto text-secondary">In stock</p>
+      
+        {% endif %}
+    </div>
+
+    </div>
+  
+  </a>
+  

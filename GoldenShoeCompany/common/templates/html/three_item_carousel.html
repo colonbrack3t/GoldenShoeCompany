@@ -1,0 +1,26 @@
+<div id="carouselExampleControls" class="bg-white carousel carousel-dark slide pb-4" data-bs-ride="carousel">
+    <div class="carousel-inner" >
+        {% for three_items in items %}
+      <div class="carousel-item  {% if forloop.counter0 == 0 %} active {% endif %}">
+          <div class = "row">
+        {% for item in three_items %}
+
+        <div class = "col-12 col-md-4 p-2">
+            <a href = '{% url "single_product_page" id=item.shoe.id %}'>
+                <img width="100%" src = "{{item.image.url}}"/>{{item.product}}
+            </a>
+        </div>
+        {%endfor%}
+      </div>
+    </div>
+      {%endfor%}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>

@@ -1,0 +1,67 @@
+{% extends 'html/base_page.html' %}
+{% block main %}
+<div class = "container">
+    <div class ="row">
+{% for item in basket %}
+<div class = "col-auto row shadow border rounded p-2 m-2">
+    <div class = "col-1">
+        <img width="100%" src = "{{item.image.image.url }}">
+
+    </div>
+    <div class="col-10 row"> 
+        <div class = "col-2"> <a href = '{% url "single_product_page" id=item.item.product.id %}'><b class = "text-primary">{{item.item}}</b></a></div>
+        <div class = "col-1" > <input type="radio" onclick="this.checked = false;" style = "--radio_back_color:{{item.item.color.hex_color}}" name = "ColorAndSize" ></div>
+        <div class = "col-1">Size : {{item.item.size}}
+    
+    </div>
+        <div class = "col-3">Quantity : {{item.quantity}} 
+
+            <div class = "m-1 btn badge btn-primary" value = "{{item.id}}" name="decrease_quantity">-</div>
+            <div class = "m-1 badge btn btn-primary" value = "{{item.id}}" name="increase_quantity">+</div>
+        </div>
+
+        
+    </div>
+</div>
+{% endfor %}
+
+<div class = "col-1">
+    <a class = "btn btn-primary" href = "{% url 'checkout' %}">
+        Checkout
+    </a>
+</div>
+</div>
+</div>
+<script>
+    $('div[name=decrease_quantity]').click(
+        function(){
+
+            change_quantity($(this).attr('value'), 0)
+        }
+    )
+    $('div[name=increase_quantity]').click(
+        function(){
+           
+            change_quantity($(this).attr('value'), 1)
+        }
+    )
+    function change_quantity(id, add){
+        $.ajax({type : 'POST',
+    dataType : 'json',
+    url : "{% url 'change_basket_quantity' %}",
+    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+    data: {
+        'basket_item' : id,
+        'add' : add,
+
+    },
+    success : function(result){
+        location.reload()
+
+    }
+
+});
+    }
+    
+</script>
+{% endblock %}

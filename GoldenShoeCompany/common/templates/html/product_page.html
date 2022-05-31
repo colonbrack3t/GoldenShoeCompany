@@ -1,24 +1,109 @@
 {% extends 'html/base_page.html' %}
 {% block main %}
-<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-    Filter
-  </button>
+
   
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Filters</h5>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-      <div>
-        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+      <form method="get" class = " m-4 p-4 border rounded ">
+        <div class = "form-check row" ><b>Category</b>
+        {%for category in categories%}
+        <label class = "col-12">
+          <input value="{{category}}" name="category" class = "form-check-input" type = 'checkbox'>{{category.1}}
+        </label>
+        {%endfor%}
       </div>
+ 
+      <br>
+        <input type="submit" class = "btn btn-primary" value= "Filter"> 
+      </form>
     </div>
   </div>
+  <div class = "container"> 
+    <div class = "row mt-4 p-1   justify-content-center">
+      <button class="btn col-auto btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+        Filter
+      </button>
+      <div class="d-flex col-auto" role="search">
+        
+      <div class="input-group input-group-sm">
+          <span class="input-group-text" id="inputGroup-sizing-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg></span>
+          <input type="text" class="form-control" placeholder = "Search..." id = "search"aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+        </div>
+      </div>
+      </div>
+    
+    <div class = "row justify-content-center" id = "products">
+
+</div> </div>
+<filter hidden id="filter">{{filter.category}}</filter>
+{% include 'html/footer.html'%}    
 
 <script>
-    gender = "{{ gender }}";
-filters = "";
+gender = "{{ gender }}";
+filters = document.getElementById("filter").innerHTML;
 
+size = 15
+index = 0
+polling= false
+poll_products(gender,filters,size)
+products_collection = document.getElementById("products")
+
+function poll_products(gender, filters, size){
+  if (polling) return
+  polling=true
+    
+    $.ajax({
+    type : 'POST',
+    dataType : 'json',
+    url : "{% url 'fetch_products' %}",
+    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+    data: {
+        'filters' : filters,
+        'gender' : gender,
+        'index' : index,
+        'size' : size
+    },
+    success : function(result){
+
+        products = result['products']
+        products.forEach(element => {
+          index += 1
+            products_collection.innerHTML += element
+        });
+        polling= false
+    }
+
+});
+return
+
+}
+
+$(window).on('scroll', function() {
+  console.log($(window).scrollTop())
+  console.log($('.container').offset().top + $('.container').outerHeight() - window.innerHeight)
+  
+          if($(window).scrollTop() >= Math.round($('.container').offset().top + $('.container').outerHeight() - window.innerHeight)) {
+            poll_products(gender,"",size)
+            
+          }
+        });
+$("#search").on('change keydown paste input', function(){
+  typed = $(this).val().toUpperCase().split(" ");
+
+  [].slice.call(products_collection.children).forEach(child => {
+
+        prd_name = child.querySelector('b[name="product_name"]').innerHTML.toUpperCase()
+        
+        match = false
+        typed.forEach(word => { match |= prd_name.includes(word)})
+        child.hidden = !match && typed.length > 0
+      });
+});
 </script>
 {% endblock %}
